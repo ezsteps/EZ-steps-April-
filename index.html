@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Défi de pas — Équipe</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1D9E75;
+    --green-dark: #0F6E56;
+    --green-light: #E1F5EE;
+    --green-mid: #9FE1CB;
+    --bg: #F7F7F5;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --muted: #888780;
+    --border: rgba(0,0,0,0.08);
+    --danger: #993C1D;
+    --danger-bg: #FAECE7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .header {
+    background: var(--green);
+    color: white;
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+  }
+  .header h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.5px; }
+  .header p { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .container { max-width: 560px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .metric {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .metric-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .metric-lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .progress-wrap { margin-bottom: 0.5rem; }
+  .progress-track {
+    background: var(--bg);
+    border-radius: 99px;
+    height: 12px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--green), #5DCAA5);
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+  label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; }
+  input[type=text], input[type=number], select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border 0.2s;
+  }
+  input:focus, select:focus { border-color: var(--green); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .btn-primary {
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    color: var(--text);
+    transition: background 0.2s;
+  }
+  .btn-secondary:hover { background: var(--bg); }
+  .add-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 0.75rem; }
+  .add-row > div { flex: 1; }
+  .tags { margin-bottom: 1rem; min-height: 28px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--green-light); color: var(--green-dark);
+    border-radius: 99px; padding: 4px 12px;
+    font-size: 12px; font-weight: 500; margin: 3px;
+  }
+  .tag button {
+    background: none; border: none; cursor: pointer;
+    color: var(--green-dark); font-size: 14px; line-height: 1; padding: 0;
+  }
+  .msg {
+    font-size: 13px; min-height: 20px; margin-top: 8px;
+    padding: 8px 12px; border-radius: 8px; display: none;
+  }
+  .msg.success { display: block; background: var(--green-light); color: var(--green-dark); }
+  .msg.error { display: block; background: var(--danger-bg); color: var(--danger); }
+  .person-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .person-row:last-child { border-bottom: none; }
+  .person-left { display: flex; align-items: center; gap: 10px; }
+  .rank { font-size: 12px; color: var(--muted); min-width: 18px; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--green-light); color: var(--green-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+  }
+  .person-name { font-size: 14px; font-weight: 500; }
+  .person-right { display: flex; align-items: center; gap: 8px; }
+  .person-steps { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .badge {
+    font-size: 10px; font-weight: 600;
+    background: var(--green); color: white;
+    border-radius: 99px; padding: 2px 8px;
+  }
+  .footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 0.75rem;
+  }
+  .sync-info { font-size: 11px; color: var(--muted); }
+  #loading { text-align: center; padding: 4rem 0; color: var(--muted); font-size: 14px; }
+  #setup-view, #main-view { display: none; }
+  .spinner {
+    width: 28px; height: 28px; border: 3px solid var(--green-light);
+    border-top-color: var(--green); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .step-btn-row { display: flex; gap: 8px; align-items: flex-end; }
+  .step-btn-row > div { flex: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🥾 Défi de pas</h1>
+  <p>Données partagées entre toute l'équipe</p>
+</div>
+
+<div class="container">
+  <div id="loading">
+    <div class="spinner"></div>
+    Chargement des données…
+  </div>
+
+  <div id="setup-view">
+    <div class="card">
+      <div class="section-label">Configuration du défi</div>
+      <div class="row2">
+        <div>
+          <label>Nombre de jours</label>
+          <input type="number" id="nb-jours" min="1" value="30">
+        </div>
+        <div>
+          <label>Pas / personne / jour</label>
+          <input type="number" id="pas-par-jour" min="1" value="5000">
+        </div>
+      </div>
+      <div class="section-label">Participants</div>
+      <div class="add-row">
+        <div>
+          <input type="text" id="new-name" placeholder="Nom du participant" />
+        </div>
+        <button class="btn-secondary" onclick="addPersonSetup()">+ Ajouter</button>
+      </div>
+      <div class="tags" id="tags-container"></div>
+      <button class="btn-primary" style="width:100%" onclick="startDefi()">Démarrer le défi</button>
+      <div id="setup-msg" class="msg"></div>
+    </div>
+  </div>
+
+  <div id="main-view">
+    <div class="card">
+      <div class="section-label">Progression de l'équipe</div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-val" id="stat-cumul">0</div>
+          <div class="metric-lbl">Pas cumulés</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val" id="stat-objectif">0</div>
+          <div class="metric-lbl">Objectif total</div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+        </div>
+        <div class="progress-meta">
+          <span id="progress-days"></span>
+          <span id="progress-pct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Enregistrer mes pas aujourd'hui</div>
+      <div class="step-btn-row">
+        <div>
+          <label>Mon nom</label>
+          <select id="select-person"></select>
+        </div>
+        <button class="btn-primary" onclick="ajouterPas()">+ 5 000 pas</button>
+      </div>
+      <div id="check-msg" class="msg"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Classement de l'équipe</div>
+      <div id="leaderboard"></div>
+    </div>
+
+    <div class="footer">
+      <button class="btn-secondary" onclick="refreshData()">↻ Actualiser</button>
+      <span class="sync-info" id="sync-info">Synchronisé avec Google Sheets</span>
+      <button class="btn-secondary" onclick="resetConfirm()">Recommencer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycby3YVMP8He6dFc4vrBbblvBapKYtdXT4TJpvQh0k1StRMlDnPzH7eg3FFm9SfVvqiP_fw/exec';
+let state = null;
+let tempPersonnes = [];
+
+function apiCall(params) {
+  const url = API + '?' + new URLSearchParams(params).toString();
+  return fetch(url).then(r => r.json());
+}
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0,10);
+}
+
+function fmt(n) {
+  return Math.round(n).toLocaleString('fr-CA');
+}
+
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+}
+
+function hasDoneToday(logs, name) {
+  const today = getTodayKey();
+  return logs[name] && logs[name].includes(today);
+}
+
+function totalPas(s) {
+  let t = 0;
+  for (const name of s.personnes) {
+    t += ((s.logs||{})[name]||[]).length * s.pasParJour;
+  }
+  return t;
+}
+
+function objectifTotal(s) {
+  return s.personnes.length * s.jours * s.pasParJour;
+}
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + type;
+  if (type === 'success') setTimeout(() => { el.className = 'msg'; }, 4000);
+}
+
+function renderMain(s) {
+  const obj = objectifTotal(s);
+  const cumul = totalPas(s);
+  const pct = obj > 0 ? Math.min(100, Math.round(cumul / obj * 100)) : 0;
+
+  document.getElementById('stat-cumul').textContent = fmt(cumul);
+  document.getElementById('stat-objectif').textContent = fmt(obj);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-days').textContent = s.jours + ' jours · ' + s.personnes.length + ' participants';
+
+  const sel = document.getElementById('select-person');
+  const curVal = sel.value;
+  sel.innerHTML = '';
+  for (const p of s.personnes) {
+    const opt = document.createElement('option');
+    opt.value = p;
+    opt.textContent = p + (hasDoneToday(s.logs||{}, p) ? ' ✓' : '');
+    sel.appendChild(opt);
+  }
+  if (curVal && s.personnes.includes(curVal)) sel.value = curVal;
+
+  const lb = document.getElementById('leaderboard');
+  const sorted = [...s.personnes].sort((a,b) =>
+    ((s.logs||{})[b]||[]).length - ((s.logs||{})[a]||[]).length
+  );
+  lb.innerHTML = '';
+  sorted.forEach((p, i) => {
+    const days = ((s.logs||{})[p]||[]).length;
+    const steps = days * s.pasParJour;
+    const done = hasDoneToday(s.logs||{}, p);
+    const row = document.createElement('div');
+    row.className = 'person-row';
+    row.innerHTML = `
+      <div class="person-left">
+        <span class="rank">${i+1}</span>
+        <div class="avatar">${initials(p)}</div>
+        <span class="person-name">${p}</span>
+      </div>
+      <div class="person-right">
+        <span class="person-steps">${fmt(steps)} pas</span>
+        ${done ? '<span class="badge">✓ Aujourd\'hui</span>' : ''}
+      </div>`;
+    lb.appendChild(row);
+  });
+
+  const now = new Date();
+  document.getElementById('sync-info').textContent =
+    'Mis à jour ' + now.toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'});
+}
+
+async function ajouterPas() {
+  const name = document.getElementById('select-person').value;
+  if (!name) return;
+  showMsg('check-msg', 'Enregistrement…', '');
+  document.getElementById('check-msg').style.display = 'block';
+  document.getElementById('check-msg').style.background = '#f5f5f3';
+  document.getElementById('check-msg').style.color = '#888';
+
+  try {
+    const res = await apiCall({ action: 'addSteps', name });
+    if (res.error === 'already_done') {
+      showMsg('check-msg', name + ' a déjà enregistré ses pas aujourd\'hui !', 'error');
+    } else if (res.success) {
+      showMsg('check-msg', '+ 5 000 pas ajoutés pour ' + name + ' !', 'success');
+      await refreshData();
+    } else {
+      showMsg('check-msg', 'Erreur : ' + (res.error || 'inconnue'), 'error');
+    }
+  } catch(e) {
+    showMsg('check-msg', 'Erreur de connexion. Réessayez.', 'error');
+  }
+}
+
+async function refreshData() {
+  try {
+    const s = await apiCall({ action: 'getState' });
+    if (s.configured) { state = s; renderMain(state); }
+  } catch(e) {}
+}
+
+function addPersonSetup() {
+  const inp = document.getElementById('new-name');
+  const name = inp.value.trim();
+  if (!name || tempPersonnes.includes(name)) { inp.value=''; return; }
+  tempPersonnes.push(name);
+  inp.value = '';
+  inp.focus();
+  renderTags();
+}
+
+function removePerson(name) {
+  tempPersonnes = tempPersonnes.filter(p => p !== name);
+  renderTags();
+}
+
+function renderTags() {
+  const c = document.getElementById('tags-container');
+  c.innerHTML = '';
+  for (const p of tempPersonnes) {
+    const t = document.createElement('span');
+    t.className = 'tag';
+    const safe = p.replace(/'/g,"\\'");
+    t.innerHTML = p + ' <button onclick="removePerson(\'' + safe + '\')">×</button>';
+    c.appendChild(t);
+  }
+}
+
+document.getElementById('new-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addPersonSetup();
+});
+
+async function startDefi() {
+  const jours = parseInt(document.getElementById('nb-jours').value);
+  const pas = parseInt(document.getElementById('pas-par-jour').value);
+  if (!jours || !pas || jours < 1 || pas < 1) {
+    showMsg('setup-msg', 'Veuillez entrer des valeurs valides.', 'error'); return;
+  }
+  if (tempPersonnes.length === 0) {
+    showMsg('setup-msg', 'Ajoutez au moins un participant.', 'error'); return;
+  }
+  showMsg('setup-msg', 'Sauvegarde en cours…', '');
+  document.getElementById('setup-msg').style.display = 'block';
+  document.getElementById('setup-msg').style.background = '#f5f5f3';
+  document.getElementById('setup-msg').style.color = '#888';
+
+  try {
+    const res = await apiCall({
+      action: 'setup',
+      jours,
+      pasParJour: pas,
+      personnes: tempPersonnes.join(',')
+    });
+    if (res.success) {
+      const s = await apiCall({ action: 'getState' });
+      state = s;
+      document.getElementById('setup-view').style.display = 'none';
+      document.getElementById('main-view').style.display = 'block';
+      renderMain(state);
+    } else {
+      showMsg('setup-msg', 'Erreur : ' + (res.error||'inconnue'), 'error');
+    }
+  } catch(e) {
+    showMsg('setup-msg', 'Erreur de connexion.', 'error');
+  }
+}
+
+async function resetConfirm() {
+  if (!confirm('Effacer toutes les données et recommencer ?')) return;
+  try {
+    await apiCall({ action: 'reset' });
+    tempPersonnes = state ? [...state.personnes] : [];
+    if (state) {
+      document.getElementById('nb-jours').value = state.jours;
+      document.getElementById('pas-par-jour').value = state.pasParJour;
+    }
+    renderTags();
+    state = null;
+    document.getElementById('main-view').style.display = 'none';
+    document.getElementById('setup-view').style.display = 'block';
+  } catch(e) { alert('Erreur de connexion.'); }
+}
+
+(async () => {
+  try {
+    const s = await apiCall({ action: 'getState' });
+    document.getElementById('loading').style.display = 'none';
+    if (s.configured && s.personnes && s.personnes.length > 0) {
+      state = s;
+      document.getElementById('main-view').style.display = 'block';
+      renderMain(state);
+    } else {
+      document.getElementById('setup-view').style.display = 'block';
+    }
+  } catch(e) {
+    document.getElementById('loading').innerHTML = '<p style="color:#993C1D">Erreur de connexion au serveur. Vérifiez votre URL Apps Script.</p>';
+  }
+})();
+</script>
+</body>
+</html>
