@@ -52,8 +52,9 @@
   .msg { font-size: 13px; min-height: 20px; margin-top: 8px; padding: 8px 12px; border-radius: 8px; display: none; }
   .msg.success { display: block; background: var(--green-light); color: var(--green-dark); }
   .msg.error { display: block; background: var(--danger-bg); color: var(--danger); }
-  .person-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .person-row { display: flex; flex-direction: column; padding: 10px 0; border-bottom: 1px solid var(--border); }
   .person-row:last-child { border-bottom: none; }
+  .person-main { display: flex; align-items: center; justify-content: space-between; }
   .person-left { display: flex; align-items: center; gap: 10px; }
   .rank { font-size: 12px; color: var(--muted); min-width: 18px; }
   .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--green-light); color: var(--green-dark); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
@@ -63,11 +64,10 @@
   .badge { font-size: 10px; font-weight: 600; background: var(--green); color: white; border-radius: 99px; padding: 2px 8px; }
   .btn-edit { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer; color: var(--muted); font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
   .btn-edit:hover { background: var(--bg); color: var(--text); }
-  .edit-inline { display: none; align-items: center; gap: 6px; margin-top: 6px; padding: 8px; background: var(--bg); border-radius: 10px; }
-  .edit-inline input { width: 110px; padding: 6px 10px; font-size: 13px; }
+  .edit-inline { display: none; align-items: center; gap: 6px; margin-top: 8px; padding: 10px; background: var(--bg); border-radius: 10px; flex-wrap: wrap; }
+  .edit-inline input { width: 130px; padding: 6px 10px; font-size: 13px; }
   .edit-inline .btn-save { background: var(--green); color: white; border: none; border-radius: 8px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
   .edit-inline .btn-cancel { background: none; border: none; font-size: 12px; color: var(--muted); cursor: pointer; }
-  .person-col { display: flex; flex-direction: column; }
   .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; }
   .sync-info { font-size: 11px; color: var(--muted); }
   #loading { text-align: center; padding: 4rem 0; color: var(--muted); font-size: 14px; }
@@ -82,7 +82,7 @@
   .quick-btn:active { transform: scale(0.96); }
   .quick-btn.selected { background: var(--green); color: white; border-color: var(--green-dark); }
   .custom-row { display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem; }
-  .custom-row label { font-size: 13px; color: var(--muted); white-space: nowrap; margin-bottom: 0; min-width: fit-content; }
+  .custom-row label { font-size: 13px; color: var(--muted); white-space: nowrap; margin-bottom: 0; }
   .custom-row input { flex: 1; }
   .submit-row { display: flex; align-items: center; gap: 10px; }
   .submit-row .btn-primary { flex: 1; }
@@ -185,6 +185,15 @@
       <div id="leaderboard"></div>
     </div>
 
+    <div class="card">
+      <div class="section-label">Ajouter un participant en cours de défi</div>
+      <div class="add-row">
+        <div><input type="text" id="new-member" placeholder="Nom du nouveau participant" /></div>
+        <button class="btn-secondary" onclick="ajouterParticipant()">+ Ajouter</button>
+      </div>
+      <div id="add-member-msg" class="msg"></div>
+    </div>
+
     <div class="footer">
       <button class="btn-secondary" onclick="refreshData()">↻ Actualiser</button>
       <span class="sync-info" id="sync-info">Synchronisé avec Google Sheets</span>
@@ -221,10 +230,6 @@ function apiCall(params) {
   return fetch(url).then(r => r.json());
 }
 
-function getTodayKey() {
-  return new Date().toISOString().slice(0,10);
-}
-
 function fmt(n) {
   return Math.round(n).toLocaleString('fr-CA');
 }
@@ -233,21 +238,9 @@ function initials(name) {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
 }
 
-function hasDoneToday(logs, name) {
-  const today = getTodayKey();
-  return logs[name] && logs[name].includes(today);
-}
-
-function totalPas(s) {
-  let t = 0;
-  for (const name of s.personnes) {
-    t += ((s.logs||{})[name]||[]).length * s.pasParJour;
-  }
-  return t;
-}
-
-function objectifTotal(s) {
-  return s.personnes.length * s.jours * s.pasParJour;
+function doneToday(lastEntry, name) {
+  const today = new Date().toISOString().slice(0,10);
+  return lastEntry[name] === today;
 }
 
 function showMsg(id, text, type) {
@@ -258,21 +251,20 @@ function showMsg(id, text, type) {
 }
 
 function toggleEdit(name) {
-  const id = 'edit-' + name.replace(/\s+/g, '_');
+  const id = 'edit-' + name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
   const el = document.getElementById(id);
-  if (!el) return;
-  el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
+  if (el) el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
 }
 
 async function saveEdit(name) {
-  const id = 'edit-' + name.replace(/\s+/g, '_');
-  const inputId = 'input-' + name.replace(/\s+/g, '_');
-  const val = parseInt(document.getElementById(inputId).value);
-  if (!val || val < 0) return;
+  const safeId = name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+  const val = parseInt(document.getElementById('input-' + safeId).value);
+  if (isNaN(val) || val < 0) return;
   try {
     const res = await apiCall({ action: 'setSteps', name, totalSteps: val });
     if (res.success) {
-      document.getElementById(id).style.display = 'none';
+      document.getElementById('edit-' + safeId).style.display = 'none';
+      showMsg('lb-msg', 'Pas modifiés pour ' + name + ' !', 'success');
       await refreshData();
     } else {
       alert('Erreur : ' + (res.error || 'inconnue'));
@@ -282,9 +274,28 @@ async function saveEdit(name) {
   }
 }
 
+async function ajouterParticipant() {
+  const inp = document.getElementById('new-member');
+  const name = inp.value.trim();
+  if (!name) return;
+  try {
+    const res = await apiCall({ action: 'addPerson', name });
+    if (res.success) {
+      showMsg('add-member-msg', name + ' ajouté au défi !', 'success');
+      inp.value = '';
+      await refreshData();
+    } else {
+      showMsg('add-member-msg', 'Erreur : ' + (res.error || 'inconnue'), 'error');
+    }
+  } catch(e) {
+    showMsg('add-member-msg', 'Erreur de connexion.', 'error');
+  }
+}
+
 function renderMain(s) {
-  const obj = objectifTotal(s);
-  const cumul = totalPas(s);
+  const obj = s.personnes.length * s.jours * s.pasParJour;
+  let cumul = 0;
+  for (const p of s.personnes) cumul += (s.steps[p] || 0);
   const pct = obj > 0 ? Math.min(100, Math.round(cumul / obj * 100)) : 0;
 
   document.getElementById('stat-cumul').textContent = fmt(cumul);
@@ -299,27 +310,24 @@ function renderMain(s) {
   for (const p of s.personnes) {
     const opt = document.createElement('option');
     opt.value = p;
-    opt.textContent = p + (hasDoneToday(s.logs||{}, p) ? ' ✓' : '');
+    opt.textContent = p + (doneToday(s.lastEntry || {}, p) ? ' ✓' : '');
     sel.appendChild(opt);
   }
   if (curVal && s.personnes.includes(curVal)) sel.value = curVal;
 
   const lb = document.getElementById('leaderboard');
-  const sorted = [...s.personnes].sort((a,b) =>
-    ((s.logs||{})[b]||[]).length - ((s.logs||{})[a]||[]).length
-  );
+  const sorted = [...s.personnes].sort((a,b) => (s.steps[b]||0) - (s.steps[a]||0));
   lb.innerHTML = '';
+
   sorted.forEach((p, i) => {
-    const days = ((s.logs||{})[p]||[]).length;
-    const steps = days * s.pasParJour;
-    const done = hasDoneToday(s.logs||{}, p);
-    const safeId = p.replace(/\s+/g, '_');
+    const steps = s.steps[p] || 0;
+    const done = doneToday(s.lastEntry || {}, p);
+    const safeId = p.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+    const safeName = p.replace(/'/g, "\\'");
     const row = document.createElement('div');
     row.className = 'person-row';
-    row.style.flexDirection = 'column';
-    row.style.alignItems = 'stretch';
     row.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div class="person-main">
         <div class="person-left">
           <span class="rank">${i+1}</span>
           <div class="avatar">${initials(p)}</div>
@@ -328,14 +336,14 @@ function renderMain(s) {
         <div class="person-right">
           <span class="person-steps">${fmt(steps)} pas</span>
           ${done ? '<span class="badge">✓ Aujourd\'hui</span>' : ''}
-          <button class="btn-edit" onclick="toggleEdit('${p.replace(/'/g,"\\'")}')">✏️ Modifier</button>
+          <button class="btn-edit" onclick="toggleEdit('${safeName}')">✏️ Modifier</button>
         </div>
       </div>
       <div class="edit-inline" id="edit-${safeId}">
         <span style="font-size:13px;color:var(--muted);">Total pas :</span>
-        <input type="number" id="input-${safeId}" value="${steps}" min="0" style="width:120px;">
-        <button class="btn-save" onclick="saveEdit('${p.replace(/'/g,"\\'")}')">Sauvegarder</button>
-        <button class="btn-cancel" onclick="toggleEdit('${p.replace(/'/g,"\\'")}')">Annuler</button>
+        <input type="number" id="input-${safeId}" value="${steps}" min="0">
+        <button class="btn-save" onclick="saveEdit('${safeName}')">Sauvegarder</button>
+        <button class="btn-cancel" onclick="toggleEdit('${safeName}')">Annuler</button>
       </div>`;
     lb.appendChild(row);
   });
@@ -410,6 +418,10 @@ document.getElementById('new-name').addEventListener('keydown', e => {
   if (e.key === 'Enter') addPersonSetup();
 });
 
+document.getElementById('new-member').addEventListener('keydown', e => {
+  if (e.key === 'Enter') ajouterParticipant();
+});
+
 async function startDefi() {
   const jours = parseInt(document.getElementById('nb-jours').value);
   const pas = parseInt(document.getElementById('pas-par-jour').value);
@@ -444,11 +456,7 @@ async function resetConfirm() {
   if (!confirm('Effacer toutes les données et recommencer ?')) return;
   try {
     await apiCall({ action: 'reset' });
-    tempPersonnes = state ? [...state.personnes] : [];
-    if (state) {
-      document.getElementById('nb-jours').value = state.jours;
-      document.getElementById('pas-par-jour').value = state.pasParJour;
-    }
+    tempPersonnes = [];
     renderTags();
     state = null;
     document.getElementById('main-view').style.display = 'none';
