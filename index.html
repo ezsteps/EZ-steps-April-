@@ -27,9 +27,9 @@
   .container { max-width: 560px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
   .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 1.25rem; margin-bottom: 1rem; }
   .section-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
-  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
   .metric { background: var(--bg); border-radius: 12px; padding: 1rem; text-align: center; }
-  .metric-val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; color: var(--text); }
+  .metric-val { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; color: var(--text); }
   .metric-lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
   .progress-wrap { margin-bottom: 0.5rem; }
   .progress-track { background: var(--bg); border-radius: 99px; height: 12px; overflow: hidden; }
@@ -42,6 +42,7 @@
   .btn-primary { background: var(--green); color: white; border: none; border-radius: 10px; padding: 11px 20px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; transition: background 0.2s, transform 0.1s; white-space: nowrap; }
   .btn-primary:hover { background: var(--green-dark); }
   .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-secondary { background: transparent; border: 1px solid var(--border); border-radius: 10px; padding: 9px 16px; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; color: var(--text); transition: background 0.2s; }
   .btn-secondary:hover { background: var(--bg); }
   .add-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 0.75rem; }
@@ -52,29 +53,36 @@
   .msg { font-size: 13px; min-height: 20px; margin-top: 8px; padding: 8px 12px; border-radius: 8px; display: none; }
   .msg.success { display: block; background: var(--green-light); color: var(--green-dark); }
   .msg.error { display: block; background: var(--danger-bg); color: var(--danger); }
-  .person-row { display: flex; flex-direction: column; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .person-row:last-child { border-bottom: none; }
-  .person-main { display: flex; align-items: center; justify-content: space-between; }
-  .person-left { display: flex; align-items: center; gap: 10px; }
-  .rank { font-size: 12px; color: var(--muted); min-width: 18px; }
-  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--green-light); color: var(--green-dark); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
-  .person-name { font-size: 14px; font-weight: 500; }
-  .person-right { display: flex; align-items: center; gap: 8px; }
-  .person-steps { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
-  .badge { font-size: 10px; font-weight: 600; background: var(--green); color: white; border-radius: 99px; padding: 2px 8px; }
-  .btn-edit { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer; color: var(--muted); font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
-  .btn-edit:hover { background: var(--bg); color: var(--text); }
-  .edit-inline { display: none; align-items: center; gap: 6px; margin-top: 8px; padding: 10px; background: var(--bg); border-radius: 10px; flex-wrap: wrap; }
-  .edit-inline input { width: 130px; padding: 6px 10px; font-size: 13px; }
-  .edit-inline .btn-save { background: var(--green); color: white; border: none; border-radius: 8px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
-  .edit-inline .btn-cancel { background: none; border: none; font-size: 12px; color: var(--muted); cursor: pointer; }
   .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; }
   .sync-info { font-size: 11px; color: var(--muted); }
   #loading { text-align: center; padding: 4rem 0; color: var(--muted); font-size: 14px; }
   #setup-view, #main-view { display: none; }
   .spinner { width: 28px; height: 28px; border: 3px solid var(--green-light); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .select-row { margin-bottom: 0.75rem; }
+
+  .dropdown-wrap { position: relative; margin-bottom: 0.75rem; }
+  .dropdown-trigger { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border 0.2s; }
+  .dropdown-trigger:hover, .dropdown-trigger.open { border-color: var(--green); }
+  .dropdown-trigger .placeholder { color: var(--muted); }
+  .dropdown-list { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; z-index: 20; max-height: 260px; overflow-y: auto; display: none; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .dropdown-list.open { display: block; }
+  .dropdown-item { padding: 10px 14px; font-size: 14px; cursor: pointer; color: var(--text); display: flex; align-items: center; gap: 10px; }
+  .dropdown-item:hover { background: var(--bg); }
+  .dropdown-item.selected { background: #378ADD; color: white; }
+  .dropdown-item .check { font-size: 13px; opacity: 0; min-width: 14px; }
+  .dropdown-item.selected .check { opacity: 1; }
+
+  .current-steps-bar { font-size: 13px; color: var(--muted); margin-bottom: 0.75rem; min-height: 20px; }
+  .current-steps-bar strong { color: var(--text); font-weight: 500; font-family: 'DM Mono', monospace; }
+
+  .person-tabs { display: none; gap: 8px; margin-bottom: 1rem; }
+  .person-tabs.visible { display: flex; }
+  .tab-btn { flex: 1; padding: 8px 10px; font-size: 13px; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; text-align: center; transition: background 0.15s, color 0.15s; }
+  .tab-btn:hover { background: var(--bg); color: var(--text); }
+  .tab-btn.active { background: var(--bg); color: var(--text); border-color: rgba(0,0,0,0.15); font-weight: 500; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
   .quick-steps-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; display: block; }
   .quick-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.75rem; }
   .quick-btn { background: var(--green-light); color: var(--green-dark); border: 1.5px solid transparent; border-radius: 8px; padding: 7px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.1s; }
@@ -87,6 +95,32 @@
   .submit-row { display: flex; align-items: center; gap: 10px; }
   .submit-row .btn-primary { flex: 1; }
   .selected-display { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); white-space: nowrap; }
+
+  .history-list { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .history-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .history-row:last-child { border-bottom: none; }
+  .history-day { font-size: 14px; color: var(--text); flex: 1; }
+  .history-steps-val { font-size: 13px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .btn-edit-hist { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer; color: var(--muted); font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+  .btn-edit-hist:hover { background: var(--bg); color: var(--text); }
+  .edit-hist-inline { display: flex; gap: 6px; align-items: center; }
+  .edit-hist-inline input { width: 100px; font-size: 13px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
+  .edit-hist-inline .btn-save-hist { background: var(--green); color: white; border: none; border-radius: 7px; padding: 5px 10px; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .edit-hist-inline .btn-cancel-hist { background: none; border: none; font-size: 12px; color: var(--muted); cursor: pointer; }
+  .no-history { font-size: 13px; color: var(--muted); padding: 0.75rem 0; }
+
+  .ranking-footer { display: flex; justify-content: flex-end; margin-top: 0.25rem; }
+  .secret-btn { background: none; border: none; font-size: 11px; color: var(--muted); cursor: pointer; padding: 4px 0; opacity: 0.45; font-family: 'DM Sans', sans-serif; }
+  .secret-btn:hover { opacity: 1; }
+  .ranking-panel { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-top: 0.5rem; max-height: 0; transition: max-height 0.4s ease; }
+  .ranking-panel.open { max-height: 1000px; }
+  .rank-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .rank-row:last-child { border-bottom: none; }
+  .rank-num { font-size: 12px; color: var(--muted); min-width: 20px; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--green-light); color: var(--green-dark); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+  .rank-name { font-size: 14px; color: var(--text); flex: 1; font-weight: 500; }
+  .rank-steps { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .badge { font-size: 10px; font-weight: 600; background: var(--green); color: white; border-radius: 99px; padding: 2px 8px; }
 </style>
 </head>
 <body>
@@ -127,16 +161,21 @@
   </div>
 
   <div id="main-view">
+
     <div class="card">
       <div class="section-label">Progression de l'équipe</div>
       <div class="metrics">
         <div class="metric">
           <div class="metric-val" id="stat-cumul">0</div>
-          <div class="metric-lbl">Pas cumulés</div>
+          <div class="metric-lbl">Pas collectifs</div>
         </div>
         <div class="metric">
           <div class="metric-val" id="stat-objectif">0</div>
-          <div class="metric-lbl">Objectif total</div>
+          <div class="metric-lbl">Objectif</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val" id="progress-pct">0%</div>
+          <div class="metric-lbl">Progression</div>
         </div>
       </div>
       <div class="progress-wrap">
@@ -145,44 +184,57 @@
         </div>
         <div class="progress-meta">
           <span id="progress-days"></span>
-          <span id="progress-pct">0%</span>
+          <span id="progress-msg">Chaque pas compte !</span>
         </div>
       </div>
     </div>
 
     <div class="card">
       <div class="section-label">Enregistrer mes pas aujourd'hui</div>
-      <div class="select-row">
-        <label>Mon nom</label>
-        <select id="select-person"></select>
-      </div>
-      <span class="quick-steps-label">Nombre de pas</span>
-      <div class="quick-btns">
-        <button class="quick-btn" onclick="selectSteps(1000, this)">1 000</button>
-        <button class="quick-btn" onclick="selectSteps(2000, this)">2 000</button>
-        <button class="quick-btn" onclick="selectSteps(3000, this)">3 000</button>
-        <button class="quick-btn" onclick="selectSteps(4000, this)">4 000</button>
-        <button class="quick-btn selected" onclick="selectSteps(5000, this)">5 000</button>
-        <button class="quick-btn" onclick="selectSteps(6000, this)">6 000</button>
-        <button class="quick-btn" onclick="selectSteps(7000, this)">7 000</button>
-        <button class="quick-btn" onclick="selectSteps(8000, this)">8 000</button>
-        <button class="quick-btn" onclick="selectSteps(9000, this)">9 000</button>
-        <button class="quick-btn" onclick="selectSteps(10000, this)">10 000</button>
-      </div>
-      <div class="custom-row">
-        <label>Autre :</label>
-        <input type="number" id="custom-steps" min="1" max="999999" placeholder="ex. 7 350" oninput="selectCustom(this)">
-      </div>
-      <div class="submit-row">
-        <button class="btn-primary" onclick="ajouterPas()">+ Ajouter les pas</button>
-        <span class="selected-display" id="selected-display">5 000 pas</span>
-      </div>
-      <div id="check-msg" class="msg"></div>
-    </div>
 
-    <div class="card">
-      <div class="section-label">Classement de l'équipe</div>
-      <div id="leaderboard"></div>
+      <div class="dropdown-wrap" id="dropdown-wrap">
+        <div class="dropdown-trigger" id="dropdown-trigger" onclick="toggleDropdown()">
+          <span id="trigger-label" class="placeholder">Mon nom</span>
+          <span style="font-size:11px;color:var(--muted);">▾</span>
+        </div>
+        <div class="dropdown-list" id="dropdown-list"></div>
+      </div>
+
+      <div class="current-steps-bar" id="current-steps-bar"></div>
+
+      <div class="person-tabs" id="person-tabs">
+        <button class="tab-btn active" id="tab-add" onclick="switchTab('add')">+ Ajouter des pas</button>
+        <button class="tab-btn" id="tab-history" onclick="switchTab('history')">Historique</button>
+      </div>
+
+      <div class="tab-panel active" id="panel-add">
+        <span class="quick-steps-label">Nombre de pas</span>
+        <div class="quick-btns">
+          <button class="quick-btn" onclick="selectSteps(1000,this)">1 000</button>
+          <button class="quick-btn" onclick="selectSteps(2000,this)">2 000</button>
+          <button class="quick-btn" onclick="selectSteps(3000,this)">3 000</button>
+          <button class="quick-btn" onclick="selectSteps(4000,this)">4 000</button>
+          <button class="quick-btn selected" onclick="selectSteps(5000,this)">5 000</button>
+          <button class="quick-btn" onclick="selectSteps(6000,this)">6 000</button>
+          <button class="quick-btn" onclick="selectSteps(7000,this)">7 000</button>
+          <button class="quick-btn" onclick="selectSteps(8000,this)">8 000</button>
+          <button class="quick-btn" onclick="selectSteps(9000,this)">9 000</button>
+          <button class="quick-btn" onclick="selectSteps(10000,this)">10 000</button>
+        </div>
+        <div class="custom-row">
+          <label>Autre :</label>
+          <input type="number" id="custom-steps" min="1" max="999999" placeholder="ex. 7 350" oninput="selectCustom(this)">
+        </div>
+        <div class="submit-row">
+          <button class="btn-primary" id="btn-ajouter" onclick="ajouterPas()">+ Ajouter les pas</button>
+          <span class="selected-display" id="selected-display">5 000 pas</span>
+        </div>
+        <div id="check-msg" class="msg"></div>
+      </div>
+
+      <div class="tab-panel" id="panel-history">
+        <div id="history-content"></div>
+      </div>
     </div>
 
     <div class="card">
@@ -199,6 +251,14 @@
       <span class="sync-info" id="sync-info">Synchronisé avec Google Sheets</span>
       <button class="btn-secondary" onclick="resetConfirm()">Recommencer</button>
     </div>
+
+    <div class="ranking-footer">
+      <button class="secret-btn" onclick="toggleRanking()" id="secret-toggle">classement ▾</button>
+    </div>
+    <div class="ranking-panel" id="ranking-panel">
+      <div id="leaderboard"></div>
+    </div>
+
   </div>
 </div>
 
@@ -207,6 +267,24 @@ const API = 'https://script.google.com/macros/s/AKfycby3YVMP8He6dFc4vrBbblvBapKY
 let state = null;
 let tempPersonnes = [];
 let selectedSteps = 5000;
+let selectedPerson = null;
+let dropdownOpen = false;
+let rankingOpen = false;
+let editingDay = null;
+let activeTab = 'add';
+
+const DAY_NAMES = ['dim','lun','mar','mer','jeu','ven','sam'];
+const MONTH_NAMES = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return DAY_NAMES[d.getDay()] + ' ' + d.getDate() + ' ' + MONTH_NAMES[d.getMonth()];
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
 
 function selectSteps(n, btn) {
   selectedSteps = n;
@@ -230,9 +308,7 @@ function apiCall(params) {
   return fetch(url).then(r => r.json());
 }
 
-function fmt(n) {
-  return Math.round(n).toLocaleString('fr-CA');
-}
+function fmt(n) { return Math.round(n).toLocaleString('fr-CA'); }
 
 function initials(name) {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
@@ -250,27 +326,164 @@ function showMsg(id, text, type) {
   if (type === 'success') setTimeout(() => { el.className = 'msg'; }, 4000);
 }
 
-function toggleEdit(name) {
-  const id = 'edit-' + name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
-  const el = document.getElementById(id);
-  if (el) el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
+function toggleDropdown() {
+  dropdownOpen = !dropdownOpen;
+  document.getElementById('dropdown-list').classList.toggle('open', dropdownOpen);
+  document.getElementById('dropdown-trigger').classList.toggle('open', dropdownOpen);
 }
 
-async function saveEdit(name) {
-  const safeId = name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
-  const val = parseInt(document.getElementById('input-' + safeId).value);
+function selectPersonFromDropdown(name) {
+  selectedPerson = name;
+  dropdownOpen = false;
+  editingDay = null;
+  document.getElementById('dropdown-list').classList.remove('open');
+  document.getElementById('dropdown-trigger').classList.remove('open');
+  document.getElementById('trigger-label').textContent = name;
+  document.getElementById('trigger-label').classList.remove('placeholder');
+  const steps = state ? (state.steps[name] || 0) : 0;
+  const doneTd = state ? doneToday(state.lastEntry || {}, name) : false;
+  document.getElementById('current-steps-bar').innerHTML =
+    'Tes pas totaux : <strong>' + fmt(steps) + ' pas</strong>' +
+    (doneTd ? ' &nbsp;<span style="font-size:11px;background:var(--green);color:white;border-radius:99px;padding:2px 8px;">✓ Aujourd\'hui</span>' : '');
+  document.getElementById('person-tabs').classList.add('visible');
+  switchTab('add');
+  renderDropdownItems();
+}
+
+function renderDropdownItems() {
+  if (!state) return;
+  const list = document.getElementById('dropdown-list');
+  list.innerHTML = state.personnes.map(p => {
+    const safe = p.replace(/'/g, "\\'");
+    return `<div class="dropdown-item ${selectedPerson === p ? 'selected' : ''}" onclick="selectPersonFromDropdown('${safe}')">
+      <span class="check">✓</span><span>${p}</span>
+    </div>`;
+  }).join('');
+}
+
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('dropdown-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    dropdownOpen = false;
+    document.getElementById('dropdown-list').classList.remove('open');
+    document.getElementById('dropdown-trigger').classList.remove('open');
+  }
+});
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-add').classList.toggle('active', tab === 'add');
+  document.getElementById('tab-history').classList.toggle('active', tab === 'history');
+  document.getElementById('panel-add').classList.toggle('active', tab === 'add');
+  document.getElementById('panel-history').classList.toggle('active', tab === 'history');
+  if (tab === 'history') renderHistory();
+}
+
+function renderHistory() {
+  if (!state || !selectedPerson) return;
+  const history = state.history && state.history[selectedPerson] ? state.history[selectedPerson] : {};
+  const days = Object.keys(history).sort().reverse();
+  const el = document.getElementById('history-content');
+  if (days.length === 0) {
+    el.innerHTML = '<div class="no-history">Aucun pas enregistré pour l\'instant.</div>';
+    return;
+  }
+  el.innerHTML = '<div class="history-list">' + days.map(day => {
+    const steps = history[day];
+    const isEditing = editingDay === day;
+    const safeDay = day.replace(/'/g, "\\'");
+    return `<div class="history-row">
+      <span class="history-day">${formatDate(day)}</span>
+      ${isEditing
+        ? `<div class="edit-hist-inline">
+             <input id="edit-hist-inp" type="number" value="${steps}" min="0" step="100" />
+             <button class="btn-save-hist" onclick="saveHistEdit('${safeDay}')">Sauvegarder</button>
+             <button class="btn-cancel-hist" onclick="cancelHistEdit()">Annuler</button>
+           </div>`
+        : `<span class="history-steps-val">${fmt(steps)} pas</span>
+           <button class="btn-edit-hist" onclick="startHistEdit('${safeDay}')">Modifier</button>`
+      }
+    </div>`;
+  }).join('') + '</div>';
+}
+
+function startHistEdit(day) {
+  editingDay = day;
+  renderHistory();
+  setTimeout(() => { const inp = document.getElementById('edit-hist-inp'); if (inp) inp.focus(); }, 50);
+}
+
+function cancelHistEdit() {
+  editingDay = null;
+  renderHistory();
+}
+
+async function saveHistEdit(day) {
+  const inp = document.getElementById('edit-hist-inp');
+  const val = parseInt(inp.value, 10);
   if (isNaN(val) || val < 0) return;
   try {
-    const res = await apiCall({ action: 'setSteps', name, totalSteps: val });
+    const res = await apiCall({ action: 'setStepsDay', name: selectedPerson, date: day, steps: val });
     if (res.success) {
-      document.getElementById('edit-' + safeId).style.display = 'none';
-      showMsg('lb-msg', 'Pas modifiés pour ' + name + ' !', 'success');
+      editingDay = null;
+      showMsg('check-msg', 'Journée mise à jour !', 'success');
       await refreshData();
+      if (activeTab === 'history') renderHistory();
     } else {
       alert('Erreur : ' + (res.error || 'inconnue'));
     }
   } catch(e) {
     alert('Erreur de connexion.');
+  }
+}
+
+function toggleRanking() {
+  rankingOpen = !rankingOpen;
+  document.getElementById('ranking-panel').classList.toggle('open', rankingOpen);
+  document.getElementById('secret-toggle').textContent = rankingOpen ? 'classement ▴' : 'classement ▾';
+  if (rankingOpen) renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  if (!state) return;
+  const lb = document.getElementById('leaderboard');
+  const sorted = [...state.personnes].sort((a,b) => (state.steps[b]||0) - (state.steps[a]||0));
+  lb.innerHTML = sorted.map((p, i) => {
+    const steps = state.steps[p] || 0;
+    const done = doneToday(state.lastEntry || {}, p);
+    return `<div class="rank-row">
+      <span class="rank-num">${i+1}</span>
+      <div class="avatar">${initials(p)}</div>
+      <span class="rank-name">${p}</span>
+      ${done ? '<span class="badge">✓</span>' : ''}
+      <span class="rank-steps">${fmt(steps)} pas</span>
+    </div>`;
+  }).join('');
+}
+
+async function ajouterPas() {
+  const name = selectedPerson;
+  if (!name) { showMsg('check-msg', 'Sélectionne ton nom d\'abord.', 'error'); return; }
+  if (!selectedSteps || selectedSteps < 1) {
+    showMsg('check-msg', 'Entrez un nombre de pas valide.', 'error'); return;
+  }
+  showMsg('check-msg', 'Enregistrement…', '');
+  document.getElementById('check-msg').style.display = 'block';
+  document.getElementById('check-msg').style.background = '#f5f5f3';
+  document.getElementById('check-msg').style.color = '#888';
+  try {
+    const res = await apiCall({ action: 'addSteps', name, steps: selectedSteps });
+    if (res.error === 'already_done') {
+      showMsg('check-msg', name + ' a déjà enregistré ses pas aujourd\'hui !', 'error');
+    } else if (res.success) {
+      showMsg('check-msg', '+ ' + selectedSteps.toLocaleString('fr-CA') + ' pas ajoutés pour ' + name + ' !', 'success');
+      document.getElementById('custom-steps').value = '';
+      await refreshData();
+    } else {
+      showMsg('check-msg', 'Erreur : ' + (res.error || 'inconnue'), 'error');
+    }
+  } catch(e) {
+    showMsg('check-msg', 'Erreur de connexion. Réessayez.', 'error');
   }
 }
 
@@ -297,87 +510,26 @@ function renderMain(s) {
   let cumul = 0;
   for (const p of s.personnes) cumul += (s.steps[p] || 0);
   const pct = obj > 0 ? Math.min(100, Math.round(cumul / obj * 100)) : 0;
-
   document.getElementById('stat-cumul').textContent = fmt(cumul);
   document.getElementById('stat-objectif').textContent = fmt(obj);
   document.getElementById('progress-bar').style.width = pct + '%';
   document.getElementById('progress-pct').textContent = pct + '%';
   document.getElementById('progress-days').textContent = s.jours + ' jours · ' + s.personnes.length + ' participants';
-
-  const sel = document.getElementById('select-person');
-  const curVal = sel.value;
-  sel.innerHTML = '';
-  for (const p of s.personnes) {
-    const opt = document.createElement('option');
-    opt.value = p;
-    opt.textContent = p + (doneToday(s.lastEntry || {}, p) ? ' ✓' : '');
-    sel.appendChild(opt);
+  document.getElementById('progress-msg').textContent =
+    pct >= 100 ? 'Objectif atteint — bravo !' :
+    pct > 60 ? 'Belle progression collective !' : 'Chaque pas compte !';
+  if (selectedPerson) {
+    const steps = s.steps[selectedPerson] || 0;
+    const doneTd = doneToday(s.lastEntry || {}, selectedPerson);
+    document.getElementById('current-steps-bar').innerHTML =
+      'Tes pas totaux : <strong>' + fmt(steps) + ' pas</strong>' +
+      (doneTd ? ' &nbsp;<span style="font-size:11px;background:var(--green);color:white;border-radius:99px;padding:2px 8px;">✓ Aujourd\'hui</span>' : '');
   }
-  if (curVal && s.personnes.includes(curVal)) sel.value = curVal;
-
-  const lb = document.getElementById('leaderboard');
-  const sorted = [...s.personnes].sort((a,b) => (s.steps[b]||0) - (s.steps[a]||0));
-  lb.innerHTML = '';
-
-  sorted.forEach((p, i) => {
-    const steps = s.steps[p] || 0;
-    const done = doneToday(s.lastEntry || {}, p);
-    const safeId = p.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
-    const safeName = p.replace(/'/g, "\\'");
-    const row = document.createElement('div');
-    row.className = 'person-row';
-    row.innerHTML = `
-      <div class="person-main">
-        <div class="person-left">
-          <span class="rank">${i+1}</span>
-          <div class="avatar">${initials(p)}</div>
-          <span class="person-name">${p}</span>
-        </div>
-        <div class="person-right">
-          <span class="person-steps">${fmt(steps)} pas</span>
-          ${done ? '<span class="badge">✓ Aujourd\'hui</span>' : ''}
-          <button class="btn-edit" onclick="toggleEdit('${safeName}')">✏️ Modifier</button>
-        </div>
-      </div>
-      <div class="edit-inline" id="edit-${safeId}">
-        <span style="font-size:13px;color:var(--muted);">Total pas :</span>
-        <input type="number" id="input-${safeId}" value="${steps}" min="0">
-        <button class="btn-save" onclick="saveEdit('${safeName}')">Sauvegarder</button>
-        <button class="btn-cancel" onclick="toggleEdit('${safeName}')">Annuler</button>
-      </div>`;
-    lb.appendChild(row);
-  });
-
+  renderDropdownItems();
+  if (rankingOpen) renderLeaderboard();
   const now = new Date();
   document.getElementById('sync-info').textContent =
     'Mis à jour ' + now.toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'});
-}
-
-async function ajouterPas() {
-  const name = document.getElementById('select-person').value;
-  if (!name) return;
-  if (!selectedSteps || selectedSteps < 1) {
-    showMsg('check-msg', 'Entrez un nombre de pas valide.', 'error'); return;
-  }
-  showMsg('check-msg', 'Enregistrement…', '');
-  document.getElementById('check-msg').style.display = 'block';
-  document.getElementById('check-msg').style.background = '#f5f5f3';
-  document.getElementById('check-msg').style.color = '#888';
-
-  try {
-    const res = await apiCall({ action: 'addSteps', name, steps: selectedSteps });
-    if (res.error === 'already_done') {
-      showMsg('check-msg', name + ' a déjà enregistré ses pas aujourd\'hui !', 'error');
-    } else if (res.success) {
-      showMsg('check-msg', '+ ' + selectedSteps.toLocaleString('fr-CA') + ' pas ajoutés pour ' + name + ' !', 'success');
-      document.getElementById('custom-steps').value = '';
-      await refreshData();
-    } else {
-      showMsg('check-msg', 'Erreur : ' + (res.error || 'inconnue'), 'error');
-    }
-  } catch(e) {
-    showMsg('check-msg', 'Erreur de connexion. Réessayez.', 'error');
-  }
 }
 
 async function refreshData() {
@@ -417,7 +569,6 @@ function renderTags() {
 document.getElementById('new-name').addEventListener('keydown', e => {
   if (e.key === 'Enter') addPersonSetup();
 });
-
 document.getElementById('new-member').addEventListener('keydown', e => {
   if (e.key === 'Enter') ajouterParticipant();
 });
@@ -435,7 +586,6 @@ async function startDefi() {
   document.getElementById('setup-msg').style.display = 'block';
   document.getElementById('setup-msg').style.background = '#f5f5f3';
   document.getElementById('setup-msg').style.color = '#888';
-
   try {
     const res = await apiCall({ action: 'setup', jours, pasParJour: pas, personnes: tempPersonnes.join(',') });
     if (res.success) {
@@ -457,6 +607,7 @@ async function resetConfirm() {
   try {
     await apiCall({ action: 'reset' });
     tempPersonnes = [];
+    selectedPerson = null;
     renderTags();
     state = null;
     document.getElementById('main-view').style.display = 'none';
